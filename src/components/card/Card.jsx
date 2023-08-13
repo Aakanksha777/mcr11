@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { MovieContext } from "../context/MovieContext";
 import "./Card.css";
+import Cardlist from "../cardlist/Cardlist";
 
 // global func
 const handleFilter = (value, movielist) => {
@@ -15,11 +16,9 @@ const handleFilter = (value, movielist) => {
 const Card = () => {
   const { movielist, setmovielist } = useContext(MovieContext);
   const [filterArray, setFilterArray] = useState(movielist);
-
-  const [starred, setStarred] = useState(false);
+  const [query, setQuery] = useState("");
 
   const handleYear = (e) => {
-    console.log("handleYear");
     const targetvalue = e.target.value;
     const newFilterArray = handleFilter(targetvalue, movielist);
     setFilterArray(newFilterArray);
@@ -28,25 +27,45 @@ const Card = () => {
   const handleGenre = (e) => {
     const targetvalue = e.target.value;
     const genreArr = movielist.filter((ele) => {
-      if (ele.genre === targetvalue) {
-        console.log("ele.genre", ele.genre);
-        return genreArr;
+      if (ele.genre.some((gnre) => gnre === targetvalue)) {
+        return ele;
       }
-      return movielist;
     });
+    setFilterArray(genreArr);
+    console.log("genreArr", genreArr);
   };
-  // const userAndFollowings = user?.following?.map((person) => person?.username);
-  // userAndFollowings?.push(user.username); //push username
-  // console.log("userAndFollowings", userAndFollowings);
 
-  // const updateArray = allPosts?.filter((post) =>
-  //   userAndFollowings?.some((username) => username === post?.username)
-  // );
-  // console.log("updateArray", updateArray);
-  // setFilterArray(updateArray)
+  const handleRating = (e) => {
+    const targetvalue = Number(e.target.value);
+    if (targetvalue === "all") {
+      return movielist;
+    }
+    const newFilterArray = movielist.filter(
+      (item) => item.rating === targetvalue
+    );
+    return newFilterArray;
+  };
+
+  const handleInputValue = (e) => {
+    setQuery(e.target.value);
+    const newArray = movielist.filter(
+      (ele) =>
+        ele.title.toLowerCase().includes(query) ||
+        ele.director.toLowerCase().includes(query) ||
+        ele.cast.some((cst) => cst.toLowerCase().includes(query))
+    );
+    setFilterArray(newArray);
+  };
 
   return (
     <div>
+      <input
+        placeholder="search by title, cast, director"
+        onChange={handleInputValue}
+        value={query}
+      />
+
+      <b>Year</b>
       <select onChange={handleYear}>
         <option value="all">All</option>
         <option value="1994">1994</option>
@@ -54,6 +73,7 @@ const Card = () => {
         <option value="2010">2010</option>
       </select>
 
+      <b>Genre</b>
       <select onChange={handleGenre}>
         <option value="all">All</option>
         <option value="Biography">Biography</option>
@@ -61,37 +81,16 @@ const Card = () => {
         <option value="Drama">Drama</option>
       </select>
 
-      <div className="list-container">
-        {filterArray.map(
-          ({
-            id,
-            title,
-            year,
-            genre,
-            rating,
-            director,
-            writer,
-            cast,
-            summary,
-            imageURL,
-          }) => (
-            <div key={id} className="single-card">
-              <div>
-                {" "}
-                <img src={imageURL} alt="movies" className="movie-image" />
-              </div>
-              <h3>{title}</h3>
-              <p>{summary}</p>
-              <div>
-                <button onClick={() => setStarred(!starred)}>
-                  {!starred ? "star" : "Starred"}
-                </button>
-                <button>Wtachlater</button>
-              </div>
-            </div>
-          )
-        )}
-      </div>
+      <b>Rating</b>
+      <select onChange={handleRating}>
+        <option value="all">All</option>
+        <option value="9">9</option>
+        <option value="8">8</option>
+        <option value="7">7</option>
+        <option value="6">6</option>
+      </select>
+
+      <Cardlist db={filterArray} />
     </div>
   );
 };

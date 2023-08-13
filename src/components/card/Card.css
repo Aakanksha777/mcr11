@@ -1,10 +1,12 @@
 .list-container {
     display: flex;
     border: 1px solid blue;
+    flex-wrap: wrap;
 }
 .single-card {
     margin: 1em;
     border: 1px solid gray;
+    max-width: 200px;
 }
 .movie-image {
     width: 100%;
