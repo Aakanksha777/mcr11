@@ -4,42 +4,27 @@ import { MovieContext } from "../context/MovieContext";
 
 const CardDetails = () => {
   const { id } = useParams();
+  const paramsid = Number(id);
   const { movielist } = useContext(MovieContext);
+  const newMovielist = [...movielist];
   console.log("movielist", movielist);
 
-  const movieDetailArr = movielist.find((obj) => obj.id === id);
+  const movieDetailArr = newMovielist.find((obj) => obj.id === paramsid);
 
   console.log("movieDetailArr", movieDetailArr);
 
-  if (Object.keys(movieDetailArr).length) {
-    const {
-      id,
-      title,
-      year,
-      genre,
-      rating,
-      director,
-      writer,
-      cast,
-      summary,
-      imageURL,
-    } = movieDetailArr;
-
-    return (
-      <div key={id}>
-        <img src={imageURL} alt="product" />
-        <h1>{title}</h1>
-        <h3>year : {year}</h3>
-        <p>rating : {rating}</p>
-        <i>director : {director}</i>
-        <p>writer : {writer}</p>
-        <p>cast : {cast}</p>
-        <p>summary : {summary}</p>
-      </div>
-    );
-  }
-
-  return "Not Found";
+  return (
+    <div>
+      <img src={movieDetailArr.imageURL} alt="movie" style={{ width: "50%" }} />
+      <h1>{movieDetailArr.title}</h1>
+      <h3>year : {movieDetailArr.year}</h3>
+      <p>rating : {movieDetailArr.rating}</p>
+      <i>director : {movieDetailArr.director}</i>
+      <p>writer : {movieDetailArr.writer}</p>
+      <p>cast : {movieDetailArr.cast}</p>
+      <p>summary : {movieDetailArr.summary}</p>
+    </div>
+  );
 };
 
 export default CardDetails;

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { MovieContext } from "../context/MovieContext";
 import "./Card.css";
 import Cardlist from "../cardlist/Cardlist";
+import { Link } from "react-router-dom";
 
 // global func
 const handleFilter = (value, movielist) => {
@@ -89,6 +90,8 @@ const Card = () => {
         <option value="7">7</option>
         <option value="6">6</option>
       </select>
+
+      <Link to="/modal">Add Movies</Link>
 
       <Cardlist db={filterArray} />
     </div>
