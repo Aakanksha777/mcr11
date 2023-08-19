@@ -8,24 +8,33 @@ const newKeys = movies.map((obj) => {
   obj.isWatchlist = false;
   return obj;
 });
-
+const checkPersistentDataEqualsInital = (initial) => {
+  const moviesExist = JSON.parse(localStorage.getItem("movies"));
+  if (!moviesExist) return initial
+  if (initial.length !== moviesExist.length) return moviesExist
+  let flag = true
+  moviesExist.forEach((per) => {
+    if (!initial.some((ini) => {
+      if (ini.id === per.id) {
+        return ini.isStar === per.isStar || ini.isWatchlist === per.isWatchlist
+      }
+    })) {
+      flag = false
+    }
+  })
+  return flag ? initial : moviesExist
+}
 export function MovieProvider({ children }) {
-  const [movielist, setmovielist] = useState(newKeys);
+  const [movielist, setmovielist] = useState(checkPersistentDataEqualsInital(newKeys));
 
-  //   useEffect(() => {
-  //     movielist &&
-  //       localStorage.setItem(
-  //         "movielist",
-  //         JSON.stringify({ movielist, isNotInitial: true })
-  //       );
-  //   }, [movielist]);
-
-  //   useEffect(() => {
-  //     const movielistExist = JSON.parse(localStorage.getItem("movielist"));
-  //     if (movielistExist && movielistExist.isNotInitial) {
-  //       setmovielist(movielistExist.movielist);
-  //     }
-  //   }, []);
+  useEffect(() => {
+    if (movielist !== newKeys) {
+      localStorage.setItem(
+        "movies",
+        JSON.stringify(movielist)
+      );
+    }
+  }, [movielist]);
 
   return (
     <MovieContext.Provider value={{ movielist, setmovielist }}>
